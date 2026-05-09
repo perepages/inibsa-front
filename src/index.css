@@ -1,111 +1,90 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/* src/index.css — Inibsa Smart Demand Signals · Concept 2 Hackathon Fusion */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+:root {
+  /* Paleta Inibsa */
+  --inibsa-navy: #104862;
+  --inibsa-dark: #0C2D3F;
+  --inibsa-mid: #156082;
+  --inibsa-blue: #0F9ED5;
+  --inibsa-orange: #E97132;
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+  /* MLH / Interhack */
+  --mlh-purple: #773BE7;
+  --mlh-purple-mid: #5B21B6;
+  --interhack-violet: #A78BFA;
+
+  /* Header gradient */
+  --header-grad-start: #156082;
+  --header-grad-end: #2D1B69;
+
+  /* Urgency */
+  --urgent-bg: #FEF2F2;
+  --urgent-border: #FECACA;
+  --urgent-text: #991B1B;
+  --urgent-accent: #EF4444;
+  --mid-bg: #FFF7ED;
+  --mid-border: #FED7AA;
+  --mid-text: #9A3412;
+  --mid-accent: #F97316;
+  --low-bg: #EFF6FF;
+  --low-border: #BFDBFE;
+  --low-text: #1D4ED8;
+  --low-accent: #3B82F6;
+
+  /* Status tags */
+  --tag-tec-bg: #F5F3FF;
+  --tag-tec-text: #5B21B6;
+  --tag-com-bg: #EFF6FF;
+  --tag-com-text: #1D4ED8;
+  --tag-per-bg: #FEF2F2;
+  --tag-per-text: #991B1B;
+  --tag-pro-bg: #FFF7ED;
+  --tag-pro-text: #9A3412;
+  --tag-lle-bg: #F0FDF4;
+  --tag-lle-text: #166534;
+  --tag-act-bg: #F0FDF4;
+  --tag-act-text: #166534;
+  --tag-ina-bg: #F9FAFB;
+  --tag-ina-text: #6B7280;
+
+  /* Neutres */
+  --bg: #F1F5F9;
+  --surface: #FFFFFF;
+  --border: #E2E8F0;
+  --border-soft: #F1F5F9;
+  --text-main: #1E293B;
+  --text-sub: #64748B;
+  --text-muted: #94A3B8;
+
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 15px;
+  background: var(--bg);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  margin: 0;
+  background: var(--bg);
+  min-height: 100svh;
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 920px;
   margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  padding: 1.25rem 1rem 4rem;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+button {
+  font-family: inherit;
 }
