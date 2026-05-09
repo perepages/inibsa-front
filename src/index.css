@@ -1,4 +1,4 @@
-/* src/index.css — Inibsa Smart Demand Signals · Concept 2 Hackathon Fusion */
+/* src/index.css */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
 
 *,
@@ -10,60 +10,11 @@
 }
 
 :root {
-  /* Paleta Inibsa */
-  --inibsa-navy: #104862;
-  --inibsa-dark: #0C2D3F;
-  --inibsa-mid: #156082;
-  --inibsa-blue: #0F9ED5;
-  --inibsa-orange: #E97132;
-
-  /* MLH / Interhack */
-  --mlh-purple: #773BE7;
-  --mlh-purple-mid: #5B21B6;
-  --interhack-violet: #A78BFA;
-
-  /* Header gradient */
-  --header-grad-start: #156082;
-  --header-grad-end: #2D1B69;
-
-  /* Urgency */
-  --urgent-bg: #FEF2F2;
-  --urgent-border: #FECACA;
-  --urgent-text: #991B1B;
-  --urgent-accent: #EF4444;
-  --mid-bg: #FFF7ED;
-  --mid-border: #FED7AA;
-  --mid-text: #9A3412;
-  --mid-accent: #F97316;
-  --low-bg: #EFF6FF;
-  --low-border: #BFDBFE;
-  --low-text: #1D4ED8;
-  --low-accent: #3B82F6;
-
-  /* Status tags */
-  --tag-tec-bg: #F5F3FF;
-  --tag-tec-text: #5B21B6;
-  --tag-com-bg: #EFF6FF;
-  --tag-com-text: #1D4ED8;
-  --tag-per-bg: #FEF2F2;
-  --tag-per-text: #991B1B;
-  --tag-pro-bg: #FFF7ED;
-  --tag-pro-text: #9A3412;
-  --tag-lle-bg: #F0FDF4;
-  --tag-lle-text: #166534;
-  --tag-act-bg: #F0FDF4;
-  --tag-act-text: #166534;
-  --tag-ina-bg: #F9FAFB;
-  --tag-ina-text: #6B7280;
-
   /* Neutres */
   --bg: #F1F5F9;
   --surface: #FFFFFF;
   --border: #E2E8F0;
-  --border-soft: #F1F5F9;
   --text-main: #1E293B;
-  --text-sub: #64748B;
-  --text-muted: #94A3B8;
 
   font-family: 'DM Sans', system-ui, sans-serif;
   font-size: 15px;
