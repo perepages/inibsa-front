@@ -21,7 +21,7 @@ export function useAlerts({ top_x = 20 } = {}) {
       setAlerts(data);
     } catch (err) {
       console.error("Error fetching alerts:", err);
-      setError("No s'han pogut carregar les alertes. Comprova que l'API està activa a http://localhost:8000");
+      setError("No s'han pogut carregar les alertes. Comprova que l'API està activa a http://208.85.19.72:8000");
     } finally {
       setLoading(false);
     }
