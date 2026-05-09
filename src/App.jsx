@@ -35,6 +35,8 @@ function AlertCard({ alert, onManage }) {
             </div>
             <div className="tags">
               <span className={`tag ${urgencyClass}`}>{priorityLabel(alert.priority_score)}</span>
+              {alert.product_family && <span className="tag family"><i className="ti ti-box" aria-hidden="true"></i> {alert.product_family}</span>}
+              {alert.type && <span className="tag type"><i className="ti ti-alert-triangle" aria-hidden="true"></i> {alert.type}</span>}
             </div>
           </div>
           <div className="impact-block">

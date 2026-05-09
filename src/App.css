@@ -319,6 +319,16 @@
   color: #1D4ED8;
 }
 
+.tag.family {
+  background: #F3E8FF;
+  color: #6B21A8;
+}
+
+.tag.type {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+
 .tag.technical {
   background: #F5F3FF;
   color: #5B21B6;
