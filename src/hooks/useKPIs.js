@@ -1,13 +1,18 @@
+// src/hooks/useKPIs.js
+import { useState, useEffect } from "react";
+
 export function useKPIs(alerts = []) {
-    const activeAlerts = alerts.filter(a => !a.managed);
+    const [kpis, setKpis] = useState(null);
 
-    const oppValue = activeAlerts
-        .filter(a => a.alerta === "commodity")
-        .reduce((sum, a) => sum + a.avg_price, 0);
+    useEffect(() => {
+        if (!alerts.length) return;
+        setKpis({
+            total_alerts: alerts.length,
+            urgent_alerts: alerts.filter(a => a.priority >= 80).length,
+            total_impact: alerts.reduce((s, a) => s + a.avg_price, 0),
+            managed_count: alerts.filter(a => a.managed).length,
+        });
+    }, [alerts]);
 
-    const riskValue = activeAlerts
-        .filter(a => a.alerta === "technical")
-        .reduce((sum, a) => sum + a.avg_price, 0);
-
-    return { oppValue, riskValue };
+    return kpis;
 }
