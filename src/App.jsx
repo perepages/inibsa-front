@@ -1,8 +1,10 @@
 // src/App.jsx — Inibsa Smart Demand Signals
 // Connected to real Retention API (http://localhost:8000)
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAlerts } from "./hooks/useAlerts";
 import { useKPIs } from "./hooks/useKPIs";
+import InterpretabilityGraph from "./components/InterpretabilityGraph";
+import { getMockInterpretabilityData } from "./data/mockInterpretability";
 import "./App.css";
 
 // priority_score is 1.0–10.0. >= 7 = urgent
@@ -20,6 +22,12 @@ function AlertCard({ alert, onManage }) {
   const isDone = alert.managed;
   const pct = Math.round(alert.confidence * 100);
   const urgencyClass = priorityClass(alert.priority_score);
+  const [expanded, setExpanded] = useState(false);
+
+  // Load mock interpretability data when expanded
+  const interpretabilityData = useMemo(() => {
+    return expanded ? getMockInterpretabilityData(alert.company_id) : null;
+  }, [expanded, alert.company_id]);
 
   return (
     <div className={`alert-card ${urgencyClass}${isDone ? " done" : ""}`}>
@@ -83,6 +91,25 @@ function AlertCard({ alert, onManage }) {
             <button className="btn-primary" onClick={() => onManage(alert.company_id)}>
               <i className="ti ti-check" aria-hidden="true"></i> Marcar com a completada
             </button>
+          </div>
+        )}
+
+        {/* Interpretability Toggle */}
+        <div className="card-actions" style={{ marginTop: '15px' }}>
+          <button className="btn-secondary" onClick={() => setExpanded(!expanded)} style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '8px', alignItems: 'center' }}>
+            <i className={`ti ti-chevron-${expanded ? 'up' : 'down'}`} aria-hidden="true"></i>
+            {expanded ? "Amagar detalls" : "Veure detalls i interpretació"}
+          </button>
+        </div>
+
+        {/* Expanded Graph View */}
+        {expanded && interpretabilityData && (
+          <div className="interpretability-section" style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--border-color)' }}>
+            <div style={{ marginBottom: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <i className="ti ti-info-circle"></i>
+              <strong>Cadència habitual:</strong> {interpretabilityData.typical_purchase_cadence}
+            </div>
+            <InterpretabilityGraph data={interpretabilityData} />
           </div>
         )}
 
