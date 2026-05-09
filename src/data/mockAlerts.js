@@ -1,18 +1,34 @@
 // src/data/mockAlerts.js
-export const mockAlerts = [
-    { id: "A-001", client_id: "CLI-4521", client_name: "Clínica Dental Verdaguer", location: "Barcelona, Eixample", clinic_type: "general", alert_type: "commodity_capture", client_status: "promiscu", product_family: "Anestèsia (Articaïna 4%)", reason: "Sense compra fa 18 dies. Cicle esperat: 12 dies. Possible desviament a competència detectat per sota del potencial estimat.", recommended_action: "Trucar", channel: "Delegat", urgency: "urgent", economic_impact: 420, conversion_probability: 0.78, priority_score: 91, days_overdue: 6, managed: false, outcome: null, generated_at: "2025-05-09" },
-    { id: "A-002", client_id: "CLI-2230", client_name: "Ortodoncia Sants", location: "Barcelona, Sants", clinic_type: "ortodoncia", alert_type: "technical_churn", client_status: "perdent", product_family: "Brackets ceràmics", reason: "Caiguda del 60% en volum vs. últims 3 mesos. Patró històric: compra mensual regular. Senyal de possible canvi de proveïdor.", recommended_action: "Visita presencial", channel: "Delegat", urgency: "urgent", economic_impact: 1200, conversion_probability: 0.65, priority_score: 88, days_overdue: 0, managed: false, outcome: null, generated_at: "2025-05-09" },
-    { id: "A-003", client_id: "CLI-3312", client_name: "Centre Dental Gràcia", location: "Barcelona, Gràcia", clinic_type: "general", alert_type: "commodity_replenish", client_status: "lleial", product_family: "Agulles dentals 27G", reason: "Estoc estimat proper a l'esgotament. Finestra òptima de comanda: avui o demà. Client lleial amb alta probabilitat de recompra.", recommended_action: "Trucar", channel: "Televenda", urgency: "mitja", economic_impact: 180, conversion_probability: 0.91, priority_score: 74, days_overdue: 0, managed: false, outcome: null, generated_at: "2025-05-09" },
-    { id: "A-004", client_id: "CLI-1187", client_name: "Implantologia Diagonal", location: "Barcelona, Les Corts", clinic_type: "implantologia", alert_type: "technical_churn", client_status: "perdent", product_family: "Implants cònics NP", reason: "Sense comanda fa 45 dies. Historial: compra cada 30 dies. Silenci prolongat anòmal. Risc d'abandonament alt.", recommended_action: "Visita presencial", channel: "Delegat", urgency: "urgent", economic_impact: 2800, conversion_probability: 0.52, priority_score: 85, days_overdue: 15, managed: false, outcome: null, generated_at: "2025-05-09" },
-    { id: "A-005", client_id: "CLI-5540", client_name: "Clínica Dental Sarrià", location: "Barcelona, Sarrià", clinic_type: "general", alert_type: "commodity_capture", client_status: "promiscu", product_family: "Desinfectant instrumental", reason: "Compra irregular: només 30% del potencial estimat. Competidor actiu a la zona. Finestra de captura oberta aquesta setmana.", recommended_action: "Enviar oferta", channel: "Marketing", urgency: "mitja", economic_impact: 310, conversion_probability: 0.60, priority_score: 66, days_overdue: 3, managed: false, outcome: null, generated_at: "2025-05-09" },
-    { id: "A-006", client_id: "CLI-6621", client_name: "Endodòncia Poblenou", location: "Barcelona, Poblenou", clinic_type: "especialitzada", alert_type: "technical_replenish", client_status: "actiu", product_family: "Limes de níquel-titani", reason: "Patró estable. Pròxima finestra de compra estimada en 8 dies. Sense senyal de risc. Contacte preventiu recomanat.", recommended_action: "Trucar", channel: "Televenda", urgency: "baixa", economic_impact: 650, conversion_probability: 0.88, priority_score: 58, days_overdue: 0, managed: false, outcome: null, generated_at: "2025-05-09" },
-    { id: "A-007", client_id: "CLI-7730", client_name: "Clínica Família Horta", location: "Barcelona, Horta", clinic_type: "general", alert_type: "commodity_reactivate", client_status: "inactiu", product_family: "Anestèsia (Mepivacaïna)", reason: "Sense compra fa 35 dies. Historial baix però regular. Revisar si la clínica segueix operativa o ha canviat de proveïdor.", recommended_action: "Trucar", channel: "Televenda", urgency: "mitja", economic_impact: 90, conversion_probability: 0.40, priority_score: 42, days_overdue: 10, managed: false, outcome: null, generated_at: "2025-05-09" },
-    { id: "A-008", client_id: "CLI-8845", client_name: "Clínica Dental Nou Barris", location: "Barcelona, Nou Barris", clinic_type: "general", alert_type: "commodity_capture", client_status: "promiscu", product_family: "Anestèsia (Articaïna 4%)", reason: "Compra concentrada els últims 2 mesos. Potencial total no capturat: 65%. Alta probabilitat de compra compartida amb competència.", recommended_action: "Visita presencial", channel: "Delegat", urgency: "mitja", economic_impact: 540, conversion_probability: 0.71, priority_score: 70, days_overdue: 2, managed: false, outcome: null, generated_at: "2025-05-09" },
-];
 
-export const mockKPIs = {
-    total_alerts: mockAlerts.length,
-    urgent_alerts: mockAlerts.filter(a => a.urgency === "urgent").length,
-    total_impact: mockAlerts.reduce((s, a) => s + a.economic_impact, 0),
-    managed_count: 0,
-};
+export const mockAlerts = [
+    {
+        id: "Clínica Dental Barcelona",
+        location: "Barcelona, Eixample",
+        alerta: "commodity",
+        motivo: "S'ha detectat un buit de consum esperat. Estoc probablement esgotat.",
+        priority: 95,
+        avg_price: 1200,
+        confidence: 0.85,
+        managed: false
+    },
+    {
+        id: "OdontoPlus Madrid",
+        location: "Madrid, Centro",
+        alerta: "technical",
+        motivo: "Caiguda sobtada de la freqüència de compra. Se sospita activitat de la competència.",
+        priority: 65,
+        avg_price: 4500,
+        confidence: 0.40,
+        managed: false
+    },
+    {
+        id: "Centre Dental Gràcia",
+        location: "Barcelona, Gràcia",
+        alerta: "commodity",
+        motivo: "Canvi en el patró de compra de productes d'anestèsia recurrent.",
+        priority: 85,
+        avg_price: 850,
+        confidence: 0.92,
+        managed: false
+    }
+];

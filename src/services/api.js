@@ -2,8 +2,10 @@
 import axios from "axios";
 import { mockAlerts, mockKPIs } from "../data/mockAlerts";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const USE_MOCK = true; // canvia a false quan el backend estigui llest
+// CONFIGURACIÓ DE VULTURE
+// Apunta a l'URL de l'API o Webhook que us ofereix Vulture.
+const BASE_URL = import.meta.env.VITE_VULTURE_API_URL || "https://la-teva-api-vulture.com";
+const USE_MOCK = true; // IMPORTANT: Quan vulguis dades reals de Vulture, posa això a 'false'
 
 const api = axios.create({ baseURL: BASE_URL, timeout: 8000 });
 const delay = (ms = 400) => new Promise(r => setTimeout(r, ms));
@@ -12,12 +14,14 @@ export async function fetchAlerts(filters = {}) {
     if (USE_MOCK) {
         await delay();
         let data = [...mockAlerts];
-        if (filters.urgency && filters.urgency !== "all") data = data.filter(a => a.urgency === filters.urgency);
-        if (filters.type === "commodity") data = data.filter(a => a.alert_type.startsWith("commodity"));
-        if (filters.type === "technical") data = data.filter(a => a.alert_type.startsWith("technical"));
-        return data.sort((a, b) => b.priority_score - a.priority_score);
+        if (filters.priority === "urgent") data = data.filter(a => a.priority >= 80);
+        if (filters.type === "commodity") data = data.filter(a => a.alerta.startsWith("commodity"));
+        if (filters.type === "technical") data = data.filter(a => a.alerta.startsWith("technical"));
+        return data.sort((a, b) => b.priority - a.priority);
     }
-    const { data } = await api.get("/api/alerts", { params: filters });
+
+    // DEMANAR DADES AL DASHBOARD DE VULTURE:
+    const { data } = await api.get("/api/v1/alerts", { params: filters });
     return data;
 }
 
@@ -28,7 +32,9 @@ export async function updateAlert(alertId, payload) {
         if (alert) Object.assign(alert, payload);
         return alert;
     }
-    const { data } = await api.patch(`/api/alerts/${alertId}`, payload);
+
+    // ENVIAR ACTUALITZACIÓ AL DASHBOARD DE VULTURE:
+    const { data } = await api.patch(`/api/v1/alerts/${alertId}`, payload);
     return data;
 }
 
@@ -37,6 +43,6 @@ export async function fetchKPIs() {
         await delay(200);
         return { ...mockKPIs, managed_count: mockAlerts.filter(a => a.managed).length };
     }
-    const { data } = await api.get("/api/kpis");
+    const { data } = await api.get("/api/v1/kpis");
     return data;
 }
