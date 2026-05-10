@@ -7,24 +7,34 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://208.85.19.72:8000";
 
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 60000,
+  timeout: 120000,
   headers: { "Content-Type": "application/json" },
 });
 
 /**
- * GET /alerts?top_x={n}
+ * GET /alerts?skip={n}&limit={m}&filter={f}
  * Returns an array of prioritized client alerts.
- *
- * Response fields:
- *   company_id      string  — Unique client identifier
- *   location        string  — Province where the company is located
- *   reason          string  — Human-readable alert explanation
- *   priority_score  float   — 1.0–10.0 (10 = highest priority)
- *   expected_return float   — Estimated revenue in € from successful outreach
- *   confidence      float   — 0.0–1.0 reliability of purchase pattern
  */
-export async function fetchAlerts({ top_x = 20 } = {}) {
-  const { data } = await api.get("/alerts", { params: { top_x } });
-  // Normalise: add a local `managed` flag for UI state tracking
-  return data.map(alert => ({ ...alert, managed: false }));
+export async function fetchAlerts({ skip = 0, limit = 20, filter = "all" } = {}) {
+  const { data } = await api.get("/alerts", { params: { skip, limit, filter } });
+  return data;
+}
+
+/**
+ * GET /api/alerts/{alert_id}/interpretability
+ * Returns the interpretability graph data for a specific client.
+ */
+export async function fetchInterpretability(alertId) {
+  const { data } = await api.get(`/api/alerts/${alertId}/interpretability`);
+  return data;
+}
+
+/**
+ * PUT /api/alerts/{alert_id}/status
+ * Updates the status of an alert.
+ * status: "new" | "wip" | "complete" | "discarded"
+ */
+export async function updateAlertStatus(alertId, status) {
+  const { data } = await api.put(`/api/alerts/${alertId}/status`, { status });
+  return data;
 }
