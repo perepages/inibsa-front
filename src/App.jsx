@@ -20,20 +20,21 @@ function probColor(p) { return p >= 0.75 ? "#438FC1" : p >= 0.5 ? "#e08b20" : "#
 function formatReason(reason) {
   if (!reason) return "";
 
-  // Commodity/Replenishment pattern
+  // Commodity/Replenishment pattern - flexible with spaces and decimals
   const overdueMatch = reason.match(
-    /Overdue (\d+)d \(cycle:(\d+), thresh:(\d+), conf:([\d.]+), age:(\d+)d, txns:(\d+)\)/
+    /Overdue\s+(\d+)d\s+\(cycle:(\d+(?:\.\d+)?),\s+thresh:(\d+(?:\.\d+)?),\s+conf:([\d.]+),\s+age:(\d+)d,\s+txns:(\d+)\)/i
   );
   if (overdueMatch) {
     const [, dslp, cycle, , , ageDays, txns] = overdueMatch;
     const years = (parseInt(ageDays) / 365).toFixed(1);
-    const overdueDays = parseInt(dslp) - parseInt(cycle);
-    return `Última compra fa ${dslp} dies — ${overdueDays > 0 ? overdueDays : 0} dies per sobre del seu cicle habitual de ${cycle} dies. Client amb ${txns} comandes en ${years} anys d'historial.`;
+    const cycleVal = Math.round(parseFloat(cycle));
+    const overdueDays = parseInt(dslp) - cycleVal;
+    return `Última compra fa ${dslp} dies — ${overdueDays > 0 ? overdueDays : 0} dies per sobre del seu cicle habitual de ${cycleVal} dies. Client amb ${txns} comandes en ${years} anys d'historial.`;
   }
 
-  // Volume drop pattern
+  // Volume drop pattern - flexible with spaces
   const volMatch = reason.match(
-    /Vol drop >50% \(prev6m:([\d.]+)€→recent6m:([\d.]+)€, age:(\d+)d\)/
+    /Vol\s+drop\s+>\s*50%\s+\(prev6m:([\d.]+)€\s*→\s*recent6m:([\d.]+)€,\s*age:(\d+)d\)/i
   );
   if (volMatch) {
     const [, prev, recent, ageDays] = volMatch;
@@ -42,7 +43,6 @@ function formatReason(reason) {
     return `Caiguda del ${dropPct}% en volum de compra: de ${Number(prev).toLocaleString("ca-ES", { maximumFractionDigits: 0 })}€ a ${Number(recent).toLocaleString("ca-ES", { maximumFractionDigits: 0 })}€ en els últims 6 mesos. Client amb ${years} anys d'historial.`;
   }
 
-  // Fallback: return as-is
   return reason;
 }
 
@@ -100,7 +100,7 @@ function AlertRow({ alert, onManage }) {
         </div>
 
         <div className="alert-metric">
-          <div className="alert-metric-value">{Math.round(alert.priority_score)}</div>
+          <div className="alert-metric-value">{Number(alert.priority_score).toFixed(1)}</div>
           <div className="alert-metric-label">Prioritat</div>
         </div>
 
@@ -178,8 +178,8 @@ function AlertRow({ alert, onManage }) {
   );
 }
 
-/* ─── Header with KPIs ─────────────────────────────────────── */
-function Header({ kpis }) {
+/* ─── Header (clean, minimal) ──────────────────────────────── */
+function Header() {
   return (
     <header className="header">
       <div className="header-inner">
@@ -191,29 +191,45 @@ function Header({ kpis }) {
             </div>
           </div>
         </div>
-
-        {kpis && (
-          <div className="kpi-strip">
-            <div className="kpi-item">
-              <div className="kpi-item-label"><span className="kpi-dot blue" /> Alertes</div>
-              <div className="kpi-item-value">{kpis.total_alerts}</div>
-            </div>
-            <div className="kpi-item">
-              <div className="kpi-item-label"><span className="kpi-dot red" /> Alta Prioritat</div>
-              <div className="kpi-item-value">{kpis.urgent_alerts}</div>
-            </div>
-            <div className="kpi-item">
-              <div className="kpi-item-label"><span className="kpi-dot orange" /> Retorn Potencial</div>
-              <div className="kpi-item-value">€{kpis.total_impact?.toLocaleString("ca-ES", { maximumFractionDigits: 0 })}</div>
-            </div>
-            <div className="kpi-item">
-              <div className="kpi-item-label"><span className="kpi-dot green" /> Completades</div>
-              <div className="kpi-item-value">{kpis.managed_count}/{kpis.total_alerts}</div>
-            </div>
-          </div>
-        )}
       </div>
     </header>
+  );
+}
+
+/* ─── KPI Strip (standalone, light background) ─────────────── */
+function KPIStrip({ kpis }) {
+  if (!kpis) return null;
+  return (
+    <div className="kpi-strip">
+      <div className="kpi-card">
+        <div className="kpi-card-icon blue"><i className="ti ti-bell-ringing" /></div>
+        <div className="kpi-card-body">
+          <div className="kpi-card-value">{kpis.total_alerts}</div>
+          <div className="kpi-card-label">Alertes Totals</div>
+        </div>
+      </div>
+      <div className="kpi-card">
+        <div className="kpi-card-icon red"><i className="ti ti-urgent" /></div>
+        <div className="kpi-card-body">
+          <div className="kpi-card-value">{kpis.urgent_alerts}</div>
+          <div className="kpi-card-label">Alta Prioritat</div>
+        </div>
+      </div>
+      <div className="kpi-card">
+        <div className="kpi-card-icon orange"><i className="ti ti-chart-bar" /></div>
+        <div className="kpi-card-body">
+          <div className="kpi-card-value">€{kpis.total_impact?.toLocaleString("ca-ES", { maximumFractionDigits: 0 })}</div>
+          <div className="kpi-card-label">Retorn Potencial</div>
+        </div>
+      </div>
+      <div className="kpi-card">
+        <div className="kpi-card-icon green"><i className="ti ti-circle-check" /></div>
+        <div className="kpi-card-body">
+          <div className="kpi-card-value">{kpis.managed_count}<span className="kpi-card-total">/{kpis.total_alerts}</span></div>
+          <div className="kpi-card-label">Completades</div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -232,7 +248,8 @@ export default function App() {
 
   return (
     <>
-      <Header kpis={kpis} />
+      <Header />
+      <KPIStrip kpis={kpis} />
 
       {/* Toolbar */}
       <div className="toolbar">
