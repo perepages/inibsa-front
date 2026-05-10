@@ -28,3 +28,12 @@ export async function fetchAlerts({ top_x = 20 } = {}) {
   // Normalise: add a local `managed` flag for UI state tracking
   return data.map(alert => ({ ...alert, managed: false }));
 }
+
+/**
+ * GET /api/alerts/{company_id}/interpretability
+ * Returns the interpretability graph data for a specific client.
+ */
+export async function fetchInterpretability(companyId) {
+  const { data } = await api.get(`/api/alerts/${companyId}/interpretability`);
+  return data;
+}

@@ -1,10 +1,10 @@
 // src/App.jsx — Inibsa Smart Demand Signals
 // Connected to real Retention API (http://localhost:8000)
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAlerts } from "./hooks/useAlerts";
 import { useKPIs } from "./hooks/useKPIs";
+import { fetchInterpretability } from "./services/api";
 import InterpretabilityGraph from "./components/InterpretabilityGraph";
-import { getMockInterpretabilityData } from "./data/mockInterpretability";
 import "./App.css";
 
 // priority_score is 1.0–10.0. >= 7 = urgent
@@ -24,10 +24,27 @@ function AlertCard({ alert, onManage }) {
   const urgencyClass = priorityClass(alert.priority_score);
   const [expanded, setExpanded] = useState(false);
 
-  // Load mock interpretability data when expanded
-  const interpretabilityData = useMemo(() => {
-    return expanded ? getMockInterpretabilityData(alert.company_id) : null;
-  }, [expanded, alert.company_id]);
+  const [interpretabilityData, setInterpretabilityData] = useState(null);
+  const [loadingGraph, setLoadingGraph] = useState(false);
+  const [graphError, setGraphError] = useState(null);
+
+  useEffect(() => {
+    if (expanded && !interpretabilityData) {
+      setLoadingGraph(true);
+      setGraphError(null);
+      fetchInterpretability(alert.company_id)
+        .then(data => {
+          setInterpretabilityData(data);
+        })
+        .catch(err => {
+          console.error("Error fetching interpretability data:", err);
+          setGraphError("No s'ha pogut carregar la informació d'interpretabilitat.");
+        })
+        .finally(() => {
+          setLoadingGraph(false);
+        });
+    }
+  }, [expanded, alert.company_id, interpretabilityData]);
 
   return (
     <div className={`alert-card ${urgencyClass}${isDone ? " done" : ""}`}>
@@ -103,13 +120,22 @@ function AlertCard({ alert, onManage }) {
         </div>
 
         {/* Expanded Graph View */}
-        {expanded && interpretabilityData && (
+        {expanded && (
           <div className="interpretability-section" style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--border-color)' }}>
-            <div style={{ marginBottom: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <i className="ti ti-info-circle"></i>
-              <strong>Cadència habitual:</strong> {interpretabilityData.typical_purchase_cadence}
-            </div>
-            <InterpretabilityGraph data={interpretabilityData} />
+            {loadingGraph && <div style={{ textAlign: "center", padding: "10px", color: "var(--text-secondary)" }}>Carregant detalls...</div>}
+            {graphError && <div style={{ color: "var(--color-danger)", textAlign: "center" }}>{graphError}</div>}
+            
+            {!loadingGraph && !graphError && interpretabilityData && (
+              <>
+                <div style={{ marginBottom: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <i className="ti ti-info-circle"></i>
+                  <strong>Cadència habitual:</strong> {interpretabilityData.typical_purchase_cadence}
+                </div>
+                {interpretabilityData.timeseries && interpretabilityData.timeseries.length > 0 && (
+                  <InterpretabilityGraph data={interpretabilityData} />
+                )}
+              </>
+            )}
           </div>
         )}
 
