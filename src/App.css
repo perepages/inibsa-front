@@ -36,10 +36,23 @@
   font-weight: 700;
   color: var(--text-white);
   letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.logo-wordmark span {
-  color: var(--sky);
+.inibsa-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  background-color: var(--surface, #ffffff);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm, 6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logo-divider {
+  color: var(--sky, #438FC1);
 }
 
 .logo-sub {
@@ -205,12 +218,24 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
   overflow: hidden;
-  transition: box-shadow 0.2s var(--ease), transform 0.15s var(--ease);
+  transition: box-shadow 0.2s var(--ease), transform 0.15s var(--ease), opacity 0.3s var(--ease), max-height 0.35s var(--ease), margin 0.35s var(--ease);
   animation: slideUp 0.3s var(--ease) both;
+  max-height: 1000px;
+  transform-origin: top center;
 }
 
 .alert-row:hover {
   box-shadow: var(--shadow-md);
+}
+
+.alert-row.exiting {
+  opacity: 0;
+  transform: translateX(40px) scale(0.95);
+  max-height: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  border: none;
+  pointer-events: none;
 }
 
 .alert-row.status-discarded {
@@ -282,6 +307,19 @@
 
 .alert-row.mitja .alert-indicator {
   background: var(--blue);
+}
+
+/* Status overrides for the indicator */
+.alert-row.status-complete .alert-indicator {
+  background: var(--color-success) !important;
+}
+
+.alert-row.status-wip .alert-indicator {
+  background: var(--color-warning) !important;
+}
+
+.alert-row.status-discarded .alert-indicator {
+  background: var(--text-muted) !important;
 }
 
 .alert-main {

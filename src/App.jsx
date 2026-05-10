@@ -5,6 +5,7 @@ import { useAlerts } from "./hooks/useAlerts";
 import { useKPIs } from "./hooks/useKPIs";
 import { fetchInterpretability } from "./services/api";
 import InterpretabilityGraph from "./components/InterpretabilityGraph";
+import logo from "./assets/logo.png";
 import "./App.css";
 
 function priorityClass(score) { return score >= 7.0 ? "urgent" : "mitja"; }
@@ -47,7 +48,7 @@ function formatReason(reason) {
 }
 
 const FILTERS = [
-  { key: "all",    label: "Totes" },
+  { key: "new",    label: "Noves" },
   { key: "urgent", label: "Alta Prioritat" },
   { key: "wip",    label: "En Procés" },
   { key: "done",   label: "Completades" },
@@ -80,7 +81,7 @@ function AlertRow({ alert, onStatusChange }) {
   }, [expanded, alert.alert_id, interpData]);
 
   return (
-    <div className={`alert-row ${cls}${status !== "new" ? ` status-${status}` : ""}`}>
+    <div className={`alert-row ${cls}${status !== "new" ? ` status-${status}` : ""}${alert.isExiting ? " exiting" : ""}`}>
       {/* Compact summary row */}
       <div className="alert-summary" onClick={() => setExpanded(!expanded)}>
         <div className="alert-indicator" />
@@ -213,7 +214,10 @@ function Header() {
         <div className="header-top">
           <div className="logo-area">
             <div>
-              <div className="logo-wordmark"><span>INIBSA</span> · Smart Demand</div>
+              <div className="logo-wordmark">
+                <img src={logo} alt="INIBSA" className="inibsa-logo" />
+                <span className="logo-divider">· Smart Demand</span>
+              </div>
               <div className="logo-sub">Interhack BCN 2026</div>
             </div>
           </div>
@@ -262,16 +266,18 @@ function KPIStrip({ kpis }) {
 
 /* ─── App ──────────────────────────────────────────────────── */
 export default function App() {
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [activeFilter, setActiveFilter] = useState("new");
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 20;
+
+  const { kpis, updateKpiForStatusChange } = useKPIs();
 
   const { alerts, loading, error, changeAlertStatus } = useAlerts({ 
     page: currentPage, 
     limit: PAGE_SIZE, 
-    filter: activeFilter 
+    filter: activeFilter,
+    onStatusChange: updateKpiForStatusChange
   });
-  const kpis = useKPIs(alerts);
 
   return (
     <>
@@ -295,7 +301,7 @@ export default function App() {
         <div className="toolbar-count">
           {activeFilter === "done"
             ? <><strong>{kpis?.managed_count || 0}</strong> completades</>
-            : <><strong>{alerts.length}</strong> {activeFilter === "all" ? "alertes totals" : "resultats"}</>}
+            : <><strong>{alerts.length}</strong> {activeFilter === "new" ? "alertes noves" : "resultats"}</>}
         </div>
       </div>
 
