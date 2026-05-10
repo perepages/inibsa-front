@@ -1,6 +1,6 @@
 // src/hooks/useAlerts.js
 import { useState, useEffect, useCallback, useRef } from "react";
-import { fetchAlerts } from "../services/api";
+import { fetchAlerts, updateAlertStatus } from "../services/api";
 
 /**
  * Fetches prioritized alerts from the real API and manages local UI state.
@@ -8,43 +8,49 @@ import { fetchAlerts } from "../services/api";
  *   company_id, location, reason, priority_score (1–10),
  *   expected_return (€), confidence (0–1), managed (local UI flag)
  */
-export function useAlerts({ top_x = 20 } = {}) {
+export function useAlerts({ page = 1, limit = 20, filter = "all" } = {}) {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Use a ref to track the last top_x we successfully fetched to avoid redundant calls
-  const lastFetchedTopX = useRef(null);
+  const lastFetchedPage = useRef(null);
+  const lastFetchedFilter = useRef(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      console.log(`[useAlerts] Fetching data (top_x: ${top_x})...`);
-      const data = await fetchAlerts({ top_x });
+      const skip = (page - 1) * limit;
+      console.log(`[useAlerts] Fetching page ${page} (skip: ${skip}, limit: ${limit}, filter: ${filter})...`);
+      const data = await fetchAlerts({ skip, limit, filter });
       setAlerts(data);
-      lastFetchedTopX.current = top_x;
+      lastFetchedPage.current = page;
+      lastFetchedFilter.current = filter;
     } catch (err) {
       console.error("Error fetching alerts:", err);
       setError("No s'han pogut carregar les alertes. Comprova que l'API està activa a http://localhost:8000");
     } finally {
       setLoading(false);
     }
-  }, [top_x]);
+  }, [page, limit, filter]);
 
   useEffect(() => {
-    // Only fetch automatically if we haven't fetched for this top_x yet
-    if (lastFetchedTopX.current !== top_x) {
+    if (lastFetchedPage.current !== page || lastFetchedFilter.current !== filter) {
       load();
     }
-  }, [top_x, load]);
+  }, [page, filter, load]);
 
-  // Mark an alert as managed locally (no PATCH endpoint in the API)
-  const markAsManaged = useCallback((companyId) => {
+  // Change the status of an alert with an optimistic UI update
+  const changeAlertStatus = useCallback(async (alertId, newStatus) => {
     setAlerts(prev =>
-      prev.map(a => a.company_id === companyId ? { ...a, managed: true } : a)
+      prev.map(a => a.alert_id === alertId ? { ...a, status: newStatus } : a)
     );
+    try {
+      await updateAlertStatus(alertId, newStatus);
+    } catch (err) {
+      console.error("Failed to update status:", err);
+    }
   }, []);
 
-  return { alerts, loading, error, refetch: load, markAsManaged };
+  return { alerts, loading, error, refetch: load, changeAlertStatus };
 }

@@ -213,8 +213,34 @@
   box-shadow: var(--shadow-md);
 }
 
-.alert-row.done {
+.alert-row.status-discarded {
   opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.alert-row.status-complete {
+  opacity: 0.45;
+}
+
+.alert-row.status-wip {
+  border: 1px solid var(--color-warning);
+}
+
+/* Pagination controls */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 2rem;
+  padding: 1.5rem 0 3rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.pagination-info {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 @keyframes slideUp {
@@ -496,6 +522,72 @@
 
 .btn-primary:active {
   transform: scale(0.97);
+}
+
+.btn-secondary {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s var(--ease), transform 0.1s;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: var(--ice);
+}
+
+.btn-danger {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--coral);
+  color: var(--coral);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s var(--ease), transform 0.1s, color 0.15s;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: var(--coral);
+  color: var(--text-white);
+}
+
+.status-badge {
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.status-badge.wip {
+  background: rgba(224, 139, 32, 0.1);
+  color: var(--color-warning);
+}
+
+.status-badge.complete {
+  background: rgba(34, 139, 34, 0.1);
+  color: var(--color-success);
+}
+
+.status-badge.discarded {
+  background: rgba(250, 94, 88, 0.1);
+  color: var(--coral);
 }
 
 .done-badge {

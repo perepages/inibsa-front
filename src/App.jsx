@@ -49,12 +49,17 @@ function formatReason(reason) {
 const FILTERS = [
   { key: "all",    label: "Totes" },
   { key: "urgent", label: "Alta Prioritat" },
+  { key: "wip",    label: "En Procés" },
   { key: "done",   label: "Completades" },
+  { key: "discarded", label: "Descartades" },
 ];
 
 /* ─── Alert Row ────────────────────────────────────────────── */
-function AlertRow({ alert, onManage }) {
-  const isDone = alert.managed;
+function AlertRow({ alert, onStatusChange }) {
+  const status = alert.status || "new";
+  const isDone = status === "complete";
+  const isWip = status === "wip";
+  const isDiscarded = status === "discarded";
   const pct = Math.round(alert.confidence * 100);
   const cls = priorityClass(alert.priority_score);
   const [expanded, setExpanded] = useState(false);
@@ -67,15 +72,15 @@ function AlertRow({ alert, onManage }) {
     if (expanded && !interpData) {
       setLoadingInterp(true);
       setInterpError(null);
-      fetchInterpretability(alert.company_id)
+      fetchInterpretability(alert.alert_id)
         .then(data => setInterpData(data))
         .catch(() => setInterpError("No s'ha pogut carregar la informació d'interpretabilitat."))
         .finally(() => setLoadingInterp(false));
     }
-  }, [expanded, alert.company_id, interpData]);
+  }, [expanded, alert.alert_id, interpData]);
 
   return (
-    <div className={`alert-row ${cls}${isDone ? " done" : ""}`}>
+    <div className={`alert-row ${cls}${status !== "new" ? ` status-${status}` : ""}`}>
       {/* Compact summary row */}
       <div className="alert-summary" onClick={() => setExpanded(!expanded)}>
         <div className="alert-indicator" />
@@ -137,15 +142,37 @@ function AlertRow({ alert, onManage }) {
             </div>
           </div>
 
-          <div className="detail-actions">
-            {isDone ? (
-              <div className="done-badge">
-                <i className="ti ti-circle-check" aria-hidden="true" /> Acció Completada
-              </div>
-            ) : (
-              <button className="btn-primary" onClick={(e) => { e.stopPropagation(); onManage(alert.company_id); }}>
-                <i className="ti ti-check" aria-hidden="true" /> Marcar com a completada
+          <div className="detail-actions" style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
+            {status !== "new" && (
+              <button className="btn-secondary" onClick={(e) => { e.stopPropagation(); onStatusChange(alert.alert_id, "new"); }}>
+                <i className="ti ti-arrow-back-up" aria-hidden="true" /> Desfer
               </button>
+            )}
+            
+            {status !== "complete" && (
+              <button className="btn-primary" onClick={(e) => { e.stopPropagation(); onStatusChange(alert.alert_id, "complete"); }}>
+                <i className="ti ti-check" aria-hidden="true" /> Completar
+              </button>
+            )}
+            
+            {status !== "wip" && (
+              <button className="btn-secondary" onClick={(e) => { e.stopPropagation(); onStatusChange(alert.alert_id, "wip"); }}>
+                <i className="ti ti-clock" aria-hidden="true" /> En procés
+              </button>
+            )}
+            
+            {status !== "discarded" && (
+              <button className="btn-danger" onClick={(e) => { e.stopPropagation(); onStatusChange(alert.alert_id, "discarded"); }}>
+                <i className="ti ti-trash" aria-hidden="true" /> Descartar
+              </button>
+            )}
+            
+            {status !== "new" && (
+              <div className={`status-badge ${status}`} style={{ marginLeft: "auto" }}>
+                {status === "complete" && <><i className="ti ti-circle-check" /> Completada</>}
+                {status === "wip" && <><i className="ti ti-clock" /> En procés</>}
+                {status === "discarded" && <><i className="ti ti-trash" /> Descartada</>}
+              </div>
             )}
           </div>
 
@@ -236,20 +263,20 @@ function KPIStrip({ kpis }) {
 /* ─── App ──────────────────────────────────────────────────── */
 export default function App() {
   const [activeFilter, setActiveFilter] = useState("all");
-  const { alerts, loading, error, markAsManaged } = useAlerts({ top_x: 20 });
-  const kpis = useKPIs(alerts);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 20;
 
-  const pending = alerts.filter(a => !a.managed);
-  const filtered = alerts.filter(a => {
-    if (activeFilter === "done")   return a.managed;
-    if (activeFilter === "urgent") return a.priority_score >= 7.0 && !a.managed;
-    return !a.managed;
+  const { alerts, loading, error, changeAlertStatus } = useAlerts({ 
+    page: currentPage, 
+    limit: PAGE_SIZE, 
+    filter: activeFilter 
   });
+  const kpis = useKPIs(alerts);
 
   return (
     <>
       <Header />
-      <KPIStrip kpis={kpis} />
+      {currentPage === 1 && <KPIStrip kpis={kpis} />}
 
       {/* Toolbar */}
       <div className="toolbar">
@@ -259,7 +286,7 @@ export default function App() {
             <button
               key={f.key}
               className={`chip${activeFilter === f.key ? " active" : ""}`}
-              onClick={() => setActiveFilter(f.key)}
+              onClick={() => { setActiveFilter(f.key); setCurrentPage(1); }}
             >
               {f.label}
             </button>
@@ -268,7 +295,7 @@ export default function App() {
         <div className="toolbar-count">
           {activeFilter === "done"
             ? <><strong>{kpis?.managed_count || 0}</strong> completades</>
-            : <><strong>{pending.length}</strong> alertes pendents</>}
+            : <><strong>{alerts.length}</strong> {activeFilter === "all" ? "alertes totals" : "resultats"}</>}
         </div>
       </div>
 
@@ -285,7 +312,7 @@ export default function App() {
           <p>{error}</p>
         </div>
       )}
-      {!loading && !error && filtered.length === 0 && (
+      {!loading && !error && alerts.length === 0 && (
         <div className="state-box">
           <div className="state-icon"><i className="ti ti-checks" /></div>
           <p>Cap alerta en aquest filtre.</p>
@@ -294,11 +321,31 @@ export default function App() {
 
       {/* Alert list */}
       {!loading && !error && (
-        <div className="alert-list">
-          {filtered.map(a => (
-            <AlertRow key={a.company_id} alert={a} onManage={markAsManaged} />
-          ))}
-        </div>
+        <>
+          <div className="alert-list">
+            {alerts.map(a => (
+              <AlertRow key={a.alert_id} alert={a} onStatusChange={changeAlertStatus} />
+            ))}
+          </div>
+
+          <div className="pagination">
+            <button 
+              className="btn-secondary" 
+              disabled={currentPage === 1} 
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            >
+              <i className="ti ti-chevron-left" /> Anterior
+            </button>
+            <span className="pagination-info">Pàgina {currentPage}</span>
+            <button 
+              className="btn-secondary" 
+              disabled={alerts.length < PAGE_SIZE} 
+              onClick={() => setCurrentPage(prev => prev + 1)}
+            >
+              Següent <i className="ti ti-chevron-right" />
+            </button>
+          </div>
+        </>
       )}
     </>
   );

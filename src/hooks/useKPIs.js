@@ -15,9 +15,9 @@ export function useKPIs(alerts = []) {
       urgent_alerts: alerts.filter(a => a.priority_score >= 7.0).length,
       // Sum of expected_return across active (non-managed) alerts
       total_impact: alerts
-        .filter(a => !a.managed)
+        .filter(a => a.status !== "complete" && a.status !== "discarded")
         .reduce((sum, a) => sum + (a.expected_return || 0), 0),
-      managed_count: alerts.filter(a => a.managed).length,
+      managed_count: alerts.filter(a => a.status === "complete").length,
     };
   }, [alerts]);
 }
