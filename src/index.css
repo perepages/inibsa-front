@@ -1,4 +1,4 @@
-/* src/index.css */
+/* src/index.css — Design System */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
 
 *,
@@ -10,16 +10,51 @@
 }
 
 :root {
-  /* Neutres */
-  --bg: #F1F5F9;
-  --surface: #FFFFFF;
-  --border: #E2E8F0;
-  --text-main: #1E293B;
+  /* Brand palette */
+  --navy: #033864;
+  --blue: #438FC1;
+  --coral: #FA5E58;
+  --sky: #80CFEF;
+  --ice: #D9F1FA;
+  --cloud: #F4FBFE;
+  --white: #FFFFFF;
 
-  font-family: 'DM Sans', system-ui, sans-serif;
+  /* Semantic text */
+  --text-primary: #033864;
+  --text-secondary: rgba(3, 56, 100, 0.58);
+  --text-muted: rgba(3, 56, 100, 0.4);
+  --text-white: #FFFFFF;
+  --text-dark: #0a1e2f;
+
+  /* Surfaces & borders */
+  --bg: #F4FBFE;
+  --surface: #FFFFFF;
+  --border-color: rgba(3, 56, 100, 0.1);
+  --border-subtle: rgba(3, 56, 100, 0.06);
+
+  /* Accents */
+  --color-success: #1a9a5a;
+  --color-warning: #e08b20;
+  --color-danger: #FA5E58;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(3, 56, 100, 0.06);
+  --shadow-md: 0 4px 12px rgba(3, 56, 100, 0.08);
+  --shadow-lg: 0 8px 30px rgba(3, 56, 100, 0.1);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Transitions */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
   font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-primary);
   background: var(--bg);
-  color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -31,11 +66,24 @@ body {
 
 #root {
   width: 100%;
-  max-width: 920px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 1.25rem 1rem 4rem;
+  padding: 1.5rem 1.25rem 4rem;
 }
 
 button {
   font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--ice);
+  color: var(--navy);
 }

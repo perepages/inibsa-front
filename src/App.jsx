@@ -10,7 +10,7 @@ import "./App.css";
 // priority_score is 1.0–10.0. >= 7 = urgent
 function priorityClass(score) { return score >= 7.0 ? "urgent" : "mitja"; }
 function priorityLabel(score) { return score >= 7.0 ? "Alta Prioritat" : "Prioritat Mitjana"; }
-function probColor(p) { return p >= 0.75 ? "#0F9ED5" : p >= 0.5 ? "#F97316" : "#EF4444"; }
+function probColor(p) { return p >= 0.75 ? "#438FC1" : p >= 0.5 ? "#e08b20" : "#FA5E58"; }
 
 const FILTERS = [
   { key: "all",    label: "Totes" },
@@ -60,8 +60,8 @@ function AlertCard({ alert, onManage }) {
             </div>
             <div className="tags">
               <span className={`tag ${urgencyClass}`}>{priorityLabel(alert.priority_score)}</span>
-              {alert.product_family && <span className="tag family"><i className="ti ti-box" aria-hidden="true"></i> {alert.product_family}</span>}
-              {alert.type && <span className="tag type"><i className="ti ti-alert-triangle" aria-hidden="true"></i> {alert.type}</span>}
+              {alert.product_family && <span className="tag family">{alert.product_family}</span>}
+              {alert.type && <span className="tag type">{alert.type}</span>}
             </div>
           </div>
           <div className="impact-block">
@@ -112,8 +112,12 @@ function AlertCard({ alert, onManage }) {
         )}
 
         {/* Interpretability Toggle */}
-        <div className="card-actions" style={{ marginTop: '15px' }}>
-          <button className="btn-secondary" onClick={() => setExpanded(!expanded)} style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '8px', alignItems: 'center' }}>
+        <div className="card-actions" style={{ marginTop: '14px' }}>
+          <button
+            className="btn-secondary"
+            onClick={() => setExpanded(!expanded)}
+            style={{ width: '100%', justifyContent: 'center' }}
+          >
             <i className={`ti ti-chevron-${expanded ? 'up' : 'down'}`} aria-hidden="true"></i>
             {expanded ? "Amagar detalls" : "Veure detalls i interpretació"}
           </button>
@@ -121,15 +125,20 @@ function AlertCard({ alert, onManage }) {
 
         {/* Expanded Graph View */}
         {expanded && (
-          <div className="interpretability-section" style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--border-color)' }}>
-            {loadingGraph && <div style={{ textAlign: "center", padding: "10px", color: "var(--text-secondary)" }}>Carregant detalls...</div>}
-            {graphError && <div style={{ color: "var(--color-danger)", textAlign: "center" }}>{graphError}</div>}
+          <div className="interpretability-section">
+            {loadingGraph && (
+              <div style={{ textAlign: "center", padding: "20px 10px" }}>
+                <div className="spinner" />
+                <p style={{ color: "var(--text-secondary)", fontSize: "13px" }}>Carregant detalls...</p>
+              </div>
+            )}
+            {graphError && <div style={{ color: "var(--color-danger)", textAlign: "center", padding: "10px" }}>{graphError}</div>}
             
             {!loadingGraph && !graphError && interpretabilityData && (
               <>
-                <div style={{ marginBottom: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div className="interpretability-meta">
                   <i className="ti ti-info-circle"></i>
-                  <strong>Cadència habitual:</strong> {interpretabilityData.typical_purchase_cadence}
+                  <span><strong>Cadència habitual:</strong> {interpretabilityData.typical_purchase_cadence}</span>
                 </div>
                 {interpretabilityData.timeseries && interpretabilityData.timeseries.length > 0 && (
                   <InterpretabilityGraph data={interpretabilityData} />
@@ -228,19 +237,19 @@ export default function App() {
       {/* States */}
       {loading && (
         <div className="state-box">
-          <div className="state-icon">⏳</div>
+          <div className="spinner" />
           <p>Carregant alertes des de l'API...</p>
         </div>
       )}
       {error && (
         <div className="state-box">
-          <div className="state-icon">⚠️</div>
+          <div className="state-icon"><i className="ti ti-alert-circle"></i></div>
           <p>{error}</p>
         </div>
       )}
       {!loading && !error && filtered.length === 0 && (
         <div className="state-box">
-          <div className="state-icon">✅</div>
+          <div className="state-icon"><i className="ti ti-checks"></i></div>
           <p>Cap alerta en aquest filtre.</p>
         </div>
       )}
