@@ -48,7 +48,7 @@ Every alert is backed by data. The dashboard visualizes:
 ### 2. Installation
 ```bash
 # Clone the repository
-git clone https://github.com/marcprogcode/inibsa-front.git
+git clone https://github.com/perepages/inibsa-front.git
 cd inibsa-front
 
 # Install dependencies
