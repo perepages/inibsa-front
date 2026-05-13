@@ -28,7 +28,11 @@ export default function InterpretabilityGraph({ data }) {
           fontSize: '0.85rem',
           boxShadow: '0 4px 12px rgba(3, 56, 100, 0.1)'
         }}>
-          <p style={{ margin: '0 0 5px 0', fontWeight: 600, color: '#033864' }}>{label}</p>
+          <p style={{ margin: '0 0 5px 0', fontWeight: 600, color: '#033864' }}>
+            {label && typeof label === 'string' && label.includes('-') 
+              ? `${label.split('-')[2]}/${label.split('-')[1]}/${label.split('-')[0]}` 
+              : label}
+          </p>
           {payload.map((entry, index) => (
             <p key={`item-${index}`} style={{ margin: '3px 0', color: entry.color, fontSize: '0.8rem' }}>
               {entry.name}: {entry.value} dies
@@ -52,7 +56,11 @@ export default function InterpretabilityGraph({ data }) {
             dataKey="date" 
             stroke="rgba(3, 56, 100, 0.3)" 
             tick={{ fill: 'rgba(3, 56, 100, 0.5)', fontSize: 11 }} 
-            tickFormatter={(tick) => tick.substring(5)} // Show MM-DD
+            tickFormatter={(tick) => {
+              if (!tick || typeof tick !== 'string') return tick;
+              const parts = tick.split('-');
+              return parts.length === 3 ? `${parts[2]}/${parts[1]}` : tick;
+            }} // Show DD/MM
           />
           <YAxis 
             stroke="rgba(3, 56, 100, 0.3)" 

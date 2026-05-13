@@ -41,7 +41,7 @@ function formatReason(reason) {
     const [, prev, recent, ageDays] = volMatch;
     const years = (parseInt(ageDays) / 365).toFixed(1);
     const dropPct = Math.round((1 - parseFloat(recent) / parseFloat(prev)) * 100);
-    return `Caiguda del ${dropPct}% en volum de compra: de ${Number(prev).toLocaleString("ca-ES", { maximumFractionDigits: 0 })}€ a ${Number(recent).toLocaleString("ca-ES", { maximumFractionDigits: 0 })}€ en els últims 6 mesos. Client amb ${years} anys d'historial.`;
+    return `Caiguda del ${dropPct}% en volum de compra: de ${Number(prev).toLocaleString("ca-ES", { maximumFractionDigits: 0 })} € a ${Number(recent).toLocaleString("ca-ES", { maximumFractionDigits: 0 })} € en els últims 6 mesos. Client amb ${years} anys d'historial.`;
   }
 
   return reason;
@@ -100,7 +100,7 @@ function AlertRow({ alert, onStatusChange }) {
 
         <div className="alert-metric">
           <div className="alert-metric-value">
-            €{Number(alert.expected_return).toLocaleString("ca-ES", { maximumFractionDigits: 0 })}
+            {Number(alert.expected_return).toLocaleString("ca-ES", { maximumFractionDigits: 0 })} €
           </div>
           <div className="alert-metric-label">Retorn</div>
         </div>
@@ -128,7 +128,7 @@ function AlertRow({ alert, onStatusChange }) {
             <div className="detail-card">
               <div className="detail-card-title">Retorn Esperat</div>
               <div className="detail-card-main">
-                €{Number(alert.expected_return).toLocaleString("ca-ES", { maximumFractionDigits: 0 })}
+                {Number(alert.expected_return).toLocaleString("ca-ES", { maximumFractionDigits: 0 })} €
               </div>
             </div>
           </div>
@@ -249,7 +249,7 @@ function KPIStrip({ kpis }) {
       <div className="kpi-card">
         <div className="kpi-card-icon orange"><i className="ti ti-chart-bar" /></div>
         <div className="kpi-card-body">
-          <div className="kpi-card-value">€{kpis.total_impact?.toLocaleString("ca-ES", { maximumFractionDigits: 0 })}</div>
+          <div className="kpi-card-value">{kpis.total_impact?.toLocaleString("ca-ES", { maximumFractionDigits: 0 })} €</div>
           <div className="kpi-card-label">Retorn Potencial</div>
         </div>
       </div>
