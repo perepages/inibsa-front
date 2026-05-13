@@ -21,7 +21,7 @@ export function useAlerts({ page = 1, limit = 20, filter = "all", onStatusChange
     setError(null);
     try {
       const skip = (page - 1) * limit;
-      console.log(`[useAlerts] Fetching page ${page} (skip: ${skip}, limit: ${limit}, filter: ${filter})...`);
+      setLoading(true);
       const data = await fetchAlerts({ skip, limit, filter });
       setAlerts(data);
       lastFetchedPage.current = page;
